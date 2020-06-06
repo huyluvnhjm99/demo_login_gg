@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "643051325583",
+    "firebase_url": "https://loginggdemo-1591006053783.firebaseio.com",
+    "project_id": "loginggdemo-1591006053783",
+    "storage_bucket": "loginggdemo-1591006053783.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:643051325583:android:0e9c9bcf064ec0f77308fa",
+        "android_client_info": {
+          "package_name": "com.example.demologingg"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "643051325583-0k3a3gb180k6gqsomjk5nap46ftjlbds.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.demologingg",
+            "certificate_hash": "f40a844a55e3ba4a57d0b42eb8b2fee3caaafd0b"
+          }
+        },
+        {
+          "client_id": "643051325583-gfurfdn18u7leei9ui7fhllsf3617iri.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvWtOap0tCsiSrNl8BJNWmcVJiqdDeAyg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "643051325583-gfurfdn18u7leei9ui7fhllsf3617iri.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
