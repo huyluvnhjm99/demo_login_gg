@@ -1,5 +1,6 @@
 import 'package:demologingg/sign_in.dart';
 import 'package:flutter/material.dart';
+import 'package:demologingg/ui/personalityTests.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -11,11 +12,7 @@ class FirstScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'FriendlyChat',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('FriendlyChat'),
-        ),
-      ),
+      home: PersonalityTests(),
     );
   }
 }
@@ -31,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              FlutterLogo(size: 150),
+              Image.asset('assets/pto.jpg', height: 150,),
               SizedBox(height: 50),
               _signInButton(),
             ],

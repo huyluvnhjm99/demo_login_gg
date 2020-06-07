@@ -1,42 +1,34 @@
 {
   "project_info": {
-    "project_number": "643051325583",
-    "firebase_url": "https://loginggdemo-1591006053783.firebaseio.com",
-    "project_id": "loginggdemo-1591006053783",
-    "storage_bucket": "loginggdemo-1591006053783.appspot.com"
+    "project_number": "667806875673",
+    "firebase_url": "https://pto-project-2a735.firebaseio.com",
+    "project_id": "pto-project-2a735",
+    "storage_bucket": "pto-project-2a735.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:643051325583:android:0e9c9bcf064ec0f77308fa",
+        "mobilesdk_app_id": "1:667806875673:android:4fe404bd2a93298c026a88",
         "android_client_info": {
-          "package_name": "com.example.demologingg"
+          "package_name": "com.pto"
         }
       },
       "oauth_client": [
         {
-          "client_id": "643051325583-0k3a3gb180k6gqsomjk5nap46ftjlbds.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.demologingg",
-            "certificate_hash": "f40a844a55e3ba4a57d0b42eb8b2fee3caaafd0b"
-          }
-        },
-        {
-          "client_id": "643051325583-gfurfdn18u7leei9ui7fhllsf3617iri.apps.googleusercontent.com",
+          "client_id": "667806875673-gognfmqneia5f6dgftbinmdebd7uflpm.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDvWtOap0tCsiSrNl8BJNWmcVJiqdDeAyg"
+          "current_key": "AIzaSyCnoUNOE870AThi0Mh8EMgXM4PEg8fAD7s"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "643051325583-gfurfdn18u7leei9ui7fhllsf3617iri.apps.googleusercontent.com",
+              "client_id": "667806875673-gognfmqneia5f6dgftbinmdebd7uflpm.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
