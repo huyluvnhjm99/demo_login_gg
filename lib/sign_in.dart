@@ -25,7 +25,7 @@ Future<String> signInWithGoogle() async {
 
   print(currentUser.displayName);
   print('User email: ' + currentUser.email);
-  return currentUser.email;
+  return 'signInWithGoogle succeeded: $user';
 }
 
 void signOutGoogle() async{
