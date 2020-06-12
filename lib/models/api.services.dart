@@ -1,12 +1,18 @@
 import 'dart:convert' as convert;
+import 'package:demologingg/models/PersonalityTest.dart';
 import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'package:demologingg/api/api_url.dart';
 
-class APIServices {
-  static final String personalityTestUrl = 'https://pto.azurewebsites.net/api/v1/Personalitytest';
+class PersonalityTestApiRepository implements PersonalityTestRepository {
 
-  static Future fectPersonalityTest() async {
-    return await http.get(personalityTestUrl);
+  @override
+  Future fectPersonalityTest() async {
+    return await http.get(ApiUrl.personalityTest_url);
   }
 
+//  static Future fectPersonalityTest() async {
+//    return await http.get(personalityTestUrl);
+//  }
 
 }

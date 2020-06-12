@@ -1,6 +1,6 @@
-import 'package:demologingg/sign_in.dart';
+import 'package:demologingg/views/sign_in.dart';
 import 'package:flutter/material.dart';
-import 'package:demologingg/ui/personalityTests.dart';
+import 'package:demologingg/views/personalityTests.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -28,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Image.asset('assets/pto.jpg', height: 150,),
+              Image.asset("assets/pto.jpg", height: 200,),
               SizedBox(height: 50),
               _signInButton(),
             ],

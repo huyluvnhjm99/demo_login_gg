@@ -8,12 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:667806875673:android:4fe404bd2a93298c026a88",
+        "mobilesdk_app_id": "1:667806875673:android:235a61bf6b4cea53026a88",
         "android_client_info": {
-          "package_name": "com.pto"
+          "package_name": "com.example.demologingg"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "667806875673-1sqodfp0rmq3n73l5fr9vbshd53ocidf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.demologingg",
+            "certificate_hash": "30c4f0b2f916c773518e472f4c7670ca9a0debc6"
+          }
+        },
         {
           "client_id": "667806875673-gognfmqneia5f6dgftbinmdebd7uflpm.apps.googleusercontent.com",
           "client_type": 3

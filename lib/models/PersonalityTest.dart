@@ -44,3 +44,7 @@ class PersonalityTest {
     this._image = o["image"];
   }
 }
+
+abstract class PersonalityTestRepository {
+  Future fectPersonalityTest();
+}
