@@ -1,45 +1,35 @@
-import 'dart:convert';
-
-import 'package:demologingg/dependency/presenter/PersonalityPresenter.dart';
-import 'package:demologingg/models/PersonalityTest.dart';
-import 'package:demologingg/models/api.services.dart';
+import 'package:demologingg/dependency/presenter/MainPresenter.dart';
+import 'package:demologingg/data/PersonalityTest.dart';
+import 'package:demologingg/sign_in.dart';
 import 'package:demologingg/views/login_page.dart';
-import 'package:demologingg/views/sign_in.dart';
+import 'package:demologingg/views/quiz_page.dart';
 import 'package:flutter/material.dart';
 
 class PersonalityTests extends StatefulWidget {
-  PersonalityTests({Key key}) : super(key: key);
-
   @override
-  __PersonalityTestsState createState() => __PersonalityTestsState();
+  __PersonalityTestsState createState() => new __PersonalityTestsState();
 }
 
-class __PersonalityTestsState extends State<PersonalityTests>
-    implements PersonalityTestListViewContract {
+class __PersonalityTestsState extends State<PersonalityTests> implements PersonalityTestListViewContract {
   PersonalityTestPresenter _presenter;
-  List<PersonalityTest> _perTestList;
-  PersonalityTestApiRepository _perTestRepo = new PersonalityTestApiRepository();
+  List<PersonalityTest> personalityTests;
   bool _isLoading;
 
-  List<PersonalityTest> personalityTests;
+  __PersonalityTestsState() {
+    _presenter = new PersonalityTestPresenter(this);
+  }
 
-  getPersonalityTests() {
-    _perTestRepo.fectPersonalityTest().then((response) {
-      Iterable list = json.decode(response.body);
-      List<PersonalityTest> perTestList = List<PersonalityTest>();
-      perTestList =
-          list.map((model) => PersonalityTest.fromObject(model)).toList();
-
-      setState(() {
-        personalityTests = perTestList;
-      });
-    });
+  @override
+  void initState() {
+    super.initState();
+    _isLoading = true;
+    _presenter.loadPersonalityTest();
+    //getPersonalityTests();
   }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    getPersonalityTests();
     return Scaffold(
       appBar: new AppBar(
         centerTitle: true,
@@ -47,89 +37,49 @@ class __PersonalityTestsState extends State<PersonalityTests>
         title: new Text("Personality Test"),
         leading: new Padding(
           padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(backgroundImage: NetworkImage(imageUrl),),
+          child: InkWell(
+            onTap: _showPopupMenu,
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(imageUrl),
+              radius: 55,
+            ),
+          ),
+          //CircleAvatar(backgroundImage: NetworkImage(imageUrl),),
         ),
       ),
-//      AppBar(
-//        title: Text('Personality Test'),
-//        centerTitle: true,
-//        backgroundColor: Colors.deepPurpleAccent[400],
-//      ),
-      body: personalityTests == null
-          ? Center(
-              child: Text('Empty'),
-            )
-          : ListView.builder(
-              itemCount: personalityTests.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  clipBehavior: Clip.antiAlias,
+      body: personalityTests == null ? Center(child: Text('Empty'),)
+          : ListView.builder(itemCount: personalityTests.length,itemBuilder: (context, index) {
+                return Card(clipBehavior: Clip.antiAlias,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      AspectRatio(
-                        aspectRatio: 18.0 / 11.0,
-                        child: Image.network(
-                          personalityTests[index].image,
-                          height: 200,
-                        ),
-                      ),
+                      AspectRatio(aspectRatio: 18.0 / 11.0, child: Image.network( personalityTests[index].image, height: 200)),
                       Container(
                         padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
+                            role == "Admin" ?
+                                RaisedButton(onPressed: (){}, child: Text('Edit',style: TextStyle(fontWeight: FontWeight.bold)), color: Colors.deepPurpleAccent[400], textColor: Colors.white) :
+                            SizedBox(width: 0),
+                            SizedBox(width: 12),
                             RaisedButton(
-                              onPressed: () {
-                                displayInformation(
-                                    context, personalityTests[index]);
-                              },
-                              child: Text(
-                                'Information',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              color: Colors.deepPurpleAccent[400],
-                              textColor: Colors.white,
+                              onPressed: () { displayInformation(context, personalityTests[index]);},
+                              child: Text('Information',style: TextStyle(fontWeight: FontWeight.bold)), color: Colors.deepPurpleAccent[400], textColor: Colors.white
                             ),
-                            SizedBox(
-                              width: 12,
-                            ),
-                            RaisedButton(
-                              onPressed: () {},
-                              child: Text(
-                                'Test Now',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              color: Colors.deepPurpleAccent[400],
-                              textColor: Colors.white,
-                            ),
+                            SizedBox(width: 12),
+                            RaisedButton(onPressed: () {displayGuide(context, personalityTests[index]);}, child: Text('Test Now',style: TextStyle(fontWeight: FontWeight.bold)), color: Colors.deepPurpleAccent[400], textColor: Colors.white),
                           ],
                         ),
                       ),
                     ],
                   ),
                 );
-//            Card(
-//              color: Colors.white,
-//              elevation: 2.0,
-//               child: IconButton(icon: Image.network(personalityTests[index].image), onPressed: null, iconSize: 250,)
-//            );
-//            Card(
-//            color: Colors.white,
-//            elevation: 2.0,
-//            child: ListTile(
-//              title: ListTile(
-//                title: Text(personalityTests[index].type + "\n\n" + personalityTests[index].description + "\n"),
-//                onTap: null,
-//              ),
-//            ),
               },
             ),
     );
   }
-
-  void displayInformation(
-      BuildContext context, PersonalityTest personalityTest) {
+  void displayInformation(BuildContext context, PersonalityTest personalityTest) {
     var arlertDialog = AlertDialog(
       title: Text(personalityTest.type),
       content: Text(personalityTest.description),
@@ -141,11 +91,66 @@ class __PersonalityTestsState extends State<PersonalityTests>
     );
   }
 
+  void displayGuide(BuildContext context, PersonalityTest perTest) {
+    var arlertDialog = AlertDialog(
+      title: Text("GUIDE INFORMATION"),
+      content: Text("Remenber: "
+          "\nThere are no right answers to any of these questions. "
+          "\nAnswer the questions quickly, do not over-analyze them. Some seem wordedpoorly. Go with what feels best. "),
+      actions: <Widget>[
+        RaisedButton(onPressed: () {
+          Navigator.of(context, rootNavigator: true).pop('dialog');
+          Navigator.push(context, MaterialPageRoute(builder: (context) => QuizPage(perTest: perTest,)));
+          },
+            child: Text('START',style: TextStyle(fontWeight: FontWeight.bold)), color: Colors.deepPurpleAccent[400], textColor: Colors.white),
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => arlertDialog,
+    );
+  }
+
+  void _showPopupMenu() async {
+    await showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(0, 80, 100, 100),
+      items: [
+        PopupMenuItem(
+          child: Text("View"),
+        ),
+        PopupMenuItem(
+          child: Text("Edit"),
+        ),
+        PopupMenuItem(
+          child: FlatButton(onPressed: () {
+            signOutGoogle();
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) {return LoginPage();}), ModalRoute.withName('/'));
+          }, child: Text("Sign Out", style: TextStyle(color: Colors.redAccent),)),
+        ),
+      ],
+      elevation: 8.0,
+    );
+  }
+
   @override
   void onSuccess(List<PersonalityTest> items) {
     setState(() {
-      _perTestList = items;
       _isLoading = false;
+      personalityTests = items;
     });
   }
+
+//  getPersonalityTests() {
+//    _perTestRepo.fectPersonalityTest().then((response) {
+//      Iterable list = json.decode(response.body);
+//      List<PersonalityTest> perTestList = List<PersonalityTest>();
+//      perTestList = list.map((model) => PersonalityTest.fromObject(model)).toList();
+//
+//      setState(() {
+//        personalityTests = perTestList;
+//      });
+//    });
+//  }
 }

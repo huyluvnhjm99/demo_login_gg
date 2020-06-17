@@ -1,4 +1,4 @@
-import 'package:demologingg/views/sign_in.dart';
+import 'package:demologingg/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:demologingg/views/personalityTests.dart';
 
@@ -11,8 +11,8 @@ class FirstScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'FriendlyChat',
-      home: PersonalityTests(),
+      title: 'PersonalityTest',
+      home: new PersonalityTests(),
     );
   }
 }
@@ -42,15 +42,17 @@ class _LoginPageState extends State<LoginPage> {
     return OutlineButton(
       splashColor: Colors.grey,
       onPressed: () {
-        signInWithGoogle().whenComplete(() {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) {
-                return FirstScreen();
-              },
-            ),
-          );
+        signInWithGoogle().then((value) {
+          print(value.toString());
+          if(value == "LOGIN_OK") {
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstScreen();},),);
+          } else {
+            displayError(context);
+          }
         });
+//        whenComplete(() {
+////          Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstScreen();},),);
+////        });
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
       highlightElevation: 0,
@@ -75,6 +77,18 @@ class _LoginPageState extends State<LoginPage> {
           ],
         ),
       ),
+    );
+  }
+
+  void displayError(BuildContext context) {
+    var arlertDialog = AlertDialog(
+      title: Text('ERROR', style: TextStyle(color: Colors.redAccent),),
+      content: Text("LOGIN FAILED!!"),
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => arlertDialog,
     );
   }
 }
