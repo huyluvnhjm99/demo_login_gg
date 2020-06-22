@@ -16,7 +16,7 @@ class QuestionApiRepository implements QuestionRepository {
   }
 
   @override
-  Future findQuestionsByTestId(int test_id) async {
-    return await http.get(ApiUrl.QUESTION_FINDBYTESTID_URL + test_id.toString());
+  Future findQuestionsByTestId(int test_id, bool isSort) async {
+    return await http.get(ApiUrl.QUESTION_FINDBYTESTID_URL + test_id.toString() + ApiUrl.SORT + isSort.toString());
   }
 }

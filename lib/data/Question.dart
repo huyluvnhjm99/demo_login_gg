@@ -41,5 +41,5 @@ class Question {
 
 abstract class QuestionRepository {
   Future fectQuestion();
-  Future findQuestionsByTestId(int test_id);
+  Future findQuestionsByTestId(int test_id, bool isSort);
 }

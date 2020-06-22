@@ -38,7 +38,7 @@ class QuestionPresenter {
   }
 
   void loadQuestionList(int test_id) {
-    _repository.findQuestionsByTestId(test_id).then((response) {
+    _repository.findQuestionsByTestId(test_id, true).then((response) {
       Iterable list = json.decode(response.body);
       List<Question> questionList = new List<Question>();
       questionList = list.map((model) => Question.fromObject(model)).toList();
