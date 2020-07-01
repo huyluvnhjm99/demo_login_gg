@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:demologingg/data/User.dart';
+import 'package:demologingg/data/repositories/token.api.services.dart';
 import 'package:demologingg/dependency/dependancy_injector.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -12,6 +13,7 @@ String name;
 String email;
 String imageUrl;
 String role;
+String token;
 
 Future<String> signInWithGoogle() async {
   final GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
@@ -25,8 +27,6 @@ Future<String> signInWithGoogle() async {
 
   final AuthResult authResult = await _auth.signInWithCredential(credential);
   final FirebaseUser user = authResult.user;
-  final String token = await user.getIdToken().then((result) => result.token);
-
 
   assert(user.email != null);
   assert(user.displayName != null);
@@ -42,6 +42,8 @@ Future<String> signInWithGoogle() async {
   final FirebaseUser currentUser = await _auth.currentUser();
   assert(user.uid == currentUser.uid);
 
+  TokenApiRepository tokenRepo = new TokenApiRepository();
+
   UserRepository userRepo = new Injector().userRepository;
 
   await userRepo.findUserByGmail(email).then((response) {
@@ -49,14 +51,18 @@ Future<String> signInWithGoogle() async {
     bool b = result.map((model) => User.fromObject(model)).isEmpty;
 
     if(b) {
-      print("ttkkkk: " + token);
-      User userz = new User(email, name, "Token too long :'(", "User");
+      User userz = new User(email, name, "", "User");
       userRepo.postUser(userz);
     } else {
       role = result.map((model) => User.fromObject(model)).first.role;
     }
   });
 
+  await tokenRepo.fectToken(email).then((response){
+    var parseJson = json.decode(response.body);
+    token = parseJson["access_token"];
+    print("Token: " + token.toString());
+  });
 
   return 'LOGIN_OK';
   //return 'signInWithGoogle succeeded: $user';

@@ -50,9 +50,6 @@ class _LoginPageState extends State<LoginPage> {
             displayError(context);
           }
         });
-//        whenComplete(() {
-////          Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstScreen();},),);
-////        });
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
       highlightElevation: 0,
