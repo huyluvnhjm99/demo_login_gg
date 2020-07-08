@@ -117,6 +117,35 @@ class __PersonalityTestsState extends State<PersonalityTests> implements Persona
   }
 
   @override
+  void onSccess(List<PersonalityTest> items) {
+    setState(() {
+      _isLoading = false;
+      personalityTests = items;
+    });
+  }
+
+  void displyGuide(BuildContext context, PersonalityTest perTest) {
+    var arlertDialog = AlertDialog(
+      title: Text("GUIDE INFORMATION"),
+      content: Text("Remenber: "
+          "\nThere are no right answers to any of these questions. "
+          "\nAnswer the questions quickly, do not over-analyze them. Some seem wordedpoorly. Go with what feels best. "),
+      actions: <Widget>[
+        RaisedButton(onPressed: () {
+          Navigator.of(context, rootNavigator: true).pop('dialog');
+          Navigator.push(context, MaterialPageRoute(builder: (context) => QuizPage(perTest: perTest,)));
+        },
+            child: Text('START',style: TextStyle(fontWeight: FontWeight.bold)), color: Colors.deepPurpleAccent[400], textColor: Colors.white),
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => arlertDialog,
+    );
+  }
+
+  @override
   void onSuccess(List<PersonalityTest> items) {
     setState(() {
       _isLoading = false;

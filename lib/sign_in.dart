@@ -74,7 +74,35 @@ void signOutGoogle() async{
   print("User Sign Out");
 }
 
+Future<String> signInWithGogle() async {
+ final GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
+ final GoogleSignInAuthentication googleSignInAuthentication =
+ await googleSignInAccount.authentication;
 
+ final AuthCredential credential = GoogleAuthProvider.getCredential(
+   accessToken: googleSignInAuthentication.accessToken,
+   idToken: googleSignInAuthentication.idToken,
+ );
+
+ final AuthResult authResult = await _auth.signInWithCredential(credential);
+ final FirebaseUser user = authResult.user;
+
+ assert(!user.isAnonymous);
+ assert(await user.getIdToken() != null);
+
+ final FirebaseUser currentUser = await _auth.currentUser();
+ assert(user.uid == currentUser.uid);
+
+ print(currentUser.displayName);
+ print('User email: ' + currentUser.email);
+ return 'signInWithGoogle succeeded: $user';
+}
+
+void signOutGogle() async{
+ await _googleSignIn.signOut();
+
+ print("User Sign Out");
+}
 
 //Future<FirebaseUser> _handleSignIn() async {
 //  final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
