@@ -136,9 +136,6 @@ class _ResultPageState extends State<ResultPage> implements PersonalityView, Res
       position: RelativeRect.fromLTRB(100, 80, 0, 100),
       items: [
         PopupMenuItem(
-          child: Text("Edit"),
-        ),
-        PopupMenuItem(
           child: FlatButton(onPressed: () {
             signOutGoogle();
             Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) {return LoginPage();}), ModalRoute.withName('/'));

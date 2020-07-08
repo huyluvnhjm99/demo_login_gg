@@ -134,10 +134,16 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
         PageView.builder(itemCount: (_listQuestion.length / 4).toInt(), itemBuilder: (context, index) {
           return Card(clipBehavior: Clip.antiAliasWithSaveLayer,
               margin: EdgeInsets.fromLTRB(30, 50, 30, 85),
-              child: Padding(padding: EdgeInsets.fromLTRB(20, 65, 20, 35),
+              child: Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 35),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    Padding(
+                      padding:EdgeInsets.fromLTRB(280, 0, 0, 20),
+                      child: IconButton(icon: Icon(Icons.info), onPressed: () {
+                        displayDiSCGuide(context);
+                      }),
+                    ),
                     Row(
                       children: <Widget>[
                         IconButton(
@@ -149,7 +155,7 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                               _listQuestion[index * 4 + 0].list_answers.last.isChosen = false;
                               setState(() {});
                             },
-                            iconSize: 50,
+                            iconSize: 40,
                         ),
                         IconButton(
                             icon: _listQuestion[index * 4 + 0].list_answers.last.isChosen ?
@@ -160,7 +166,7 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                               _listQuestion[index * 4 + 0].list_answers.first.isChosen = false;
                               setState(() {});
                             },
-                            iconSize: 50,
+                            iconSize: 40,
                         ),
                         Expanded(child: Text(_listQuestion[index * 4 + 0].question_content, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)))
                       ],
@@ -177,7 +183,7 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                             _listQuestion[index * 4 + 1].list_answers.last.isChosen = false;
                             setState(() {});
                           },
-                          iconSize: 50,
+                          iconSize: 40,
                         ),
                         IconButton(
                           icon: _listQuestion[index * 4 + 1].list_answers.last.isChosen ?
@@ -188,7 +194,7 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                             _listQuestion[index * 4 + 1].list_answers.first.isChosen = false;
                             setState(() {});
                           },
-                          iconSize: 50,
+                          iconSize: 40,
                         ),
                         Expanded(child: Text(_listQuestion[index * 4 + 1].question_content, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)))
                       ],
@@ -205,7 +211,7 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                             _listQuestion[index * 4 + 2].list_answers.last.isChosen = false;
                             setState(() {});
                           },
-                          iconSize: 50,
+                          iconSize: 40,
                         ),
                         IconButton(
                           icon: _listQuestion[index * 4 + 2].list_answers.last.isChosen ?
@@ -216,7 +222,7 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                             _listQuestion[index * 4 + 2].list_answers.first.isChosen = false;
                             setState(() {});
                           },
-                          iconSize: 50,
+                          iconSize: 40,
                         ),
                         Expanded(child: Text(_listQuestion[index * 4 + 2].question_content, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)))
                       ],
@@ -233,7 +239,7 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                             _listQuestion[index * 4 + 3].list_answers.last.isChosen = false;
                             setState(() {});
                           },
-                          iconSize: 50,
+                          iconSize: 40,
                         ),
                         IconButton(
                           icon: _listQuestion[index * 4 + 3].list_answers.last.isChosen ?
@@ -244,7 +250,7 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                             _listQuestion[index * 4 + 3].list_answers.first.isChosen = false;
                             setState(() {});
                           },
-                          iconSize: 50,
+                          iconSize: 40,
                         ),
                         Expanded(child: Text(_listQuestion[index * 4 + 3].question_content, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)))
                       ],
@@ -296,12 +302,6 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
       context: context,
       position: RelativeRect.fromLTRB(100, 80, 0, 100),
       items: [
-        PopupMenuItem(
-          child: Text("View"),
-        ),
-        PopupMenuItem(
-          child: Text("Edit"),
-        ),
         PopupMenuItem(
           child: FlatButton(onPressed: () {
             signOutGoogle();
@@ -380,4 +380,26 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
     }
     return x == 2 ? true : false;
   }
+}
+
+void displayDiSCGuide(BuildContext context) {
+  var arlertDialog = AlertDialog(
+    title: Text('Guide'),
+    content: Text('This test contains 28 groups of four statements. Answer honestly and spontaneously. It should take you only 5 to 10 minutes to complete.'
+        '\n\n\t      * Study all the descriptions in each group of four'
+        '\n\t     * Select the one description that you consider most like you'
+        '\n\t     * Study the remaining three choices in the same group'
+        '\n\t     * Select the one description you consider least like you'),
+    actions: <Widget>[
+      RaisedButton(onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop('dialog');
+      },
+          child: Text('OK',style: TextStyle(fontWeight: FontWeight.bold)), color: Colors.deepPurpleAccent[400], textColor: Colors.white),
+    ],
+  );
+
+  showDialog(
+    context: context,
+    builder: (context) => arlertDialog,
+  );
 }

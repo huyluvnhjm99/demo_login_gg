@@ -103,10 +103,7 @@ class __PersonalityTestsState extends State<PersonalityTests> implements Persona
       position: RelativeRect.fromLTRB(0, 80, 100, 100),
       items: [
         PopupMenuItem(
-          child: Text("View"),
-        ),
-        PopupMenuItem(
-          child: Text("Edit"),
+          child: Text("View History"),
         ),
         PopupMenuItem(
           child: FlatButton(onPressed: () {
