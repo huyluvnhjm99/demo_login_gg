@@ -20,6 +20,7 @@ Future<String> signInWithGoogle() async {
   final GoogleSignInAuthentication googleSignInAuthentication =
   await googleSignInAccount.authentication;
 
+//lay access token firebase
   final AuthCredential credential = GoogleAuthProvider.getCredential(
     accessToken: googleSignInAuthentication.accessToken,
     idToken: googleSignInAuthentication.idToken,
@@ -59,8 +60,8 @@ Future<String> signInWithGoogle() async {
   });
 
   await tokenRepo.fectToken(email).then((response){
-    var parseJson = json.decode(response.body);
-    token = parseJson["access_token"];
+    var parseJson = json.decode(response.body); //ma hoa token
+    token = parseJson["access_token"];   
     print("Token: " + token.toString());
   });
 
