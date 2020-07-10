@@ -130,7 +130,7 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                 )
             );
           }, controller: pageController, physics: NeverScrollableScrollPhysics())
-            :
+            : widget.perTest.type == 'DiSC profile' ?
         PageView.builder(itemCount: (_listQuestion.length / 4).toInt(), itemBuilder: (context, index) {
           return Card(clipBehavior: Clip.antiAliasWithSaveLayer,
               margin: EdgeInsets.fromLTRB(30, 50, 30, 85),
@@ -141,7 +141,7 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                     Padding(
                       padding:EdgeInsets.fromLTRB(280, 0, 0, 20),
                       child: IconButton(icon: Icon(Icons.info), onPressed: () {
-                        displayDiSCGuide(context);
+                        displayDiSCGuide(context, "DiSC");
                       }),
                     ),
                     Row(
@@ -282,6 +282,119 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                 ),
               )
           );
+        }, controller: pageController, physics: NeverScrollableScrollPhysics())
+            : PageView.builder(itemCount: _listQuestion.length,itemBuilder: (context, index) {
+          return Card(clipBehavior: Clip.antiAliasWithSaveLayer,
+              margin: EdgeInsets.fromLTRB(30, 50, 30, 85),
+              child: Padding(padding: EdgeInsets.fromLTRB(20, 4, 20, 25),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding:EdgeInsets.fromLTRB(280, 0, 0, 5),
+                      child: IconButton(icon: Icon(Icons.info), onPressed: () {
+                        displayDiSCGuide(context, "HOLLAND");
+                      }),
+                    ),
+                    Text('Q.' + (index + 1).toString() + ': ' + _listQuestion[index].question_content, style: TextStyle(fontSize: 22)),
+                    SizedBox(height: 10),
+                    //1111111111111111111
+                    OutlineButton(
+                      onPressed: () {
+                        pageController.nextPage(duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
+                        _unChosen(index);
+                        _setChosen(index, 1);
+                        setState(() {_isDone = isDone();});
+                      },
+                      splashColor: Colors.deepPurpleAccent[400],
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      child: Container(
+                          width: 1000,
+                          padding: EdgeInsets.fromLTRB(4, 10, 4, 10),
+                          child: Text("Strongly Dislike", style: TextStyle(fontSize: 15),)
+                      ),
+                    ),
+                    //2222222222222222222
+                    SizedBox(height: 4),
+                    OutlineButton(
+                      onPressed: () {
+                        pageController.nextPage(duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
+                        _unChosen(index);
+                        _setChosen(index, 2);
+                        setState(() {_isDone = isDone();});
+                      },
+                      splashColor: Colors.deepPurpleAccent[400],
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      child: Container(
+                          width: 1000,
+                          padding: EdgeInsets.fromLTRB(4, 10, 4, 10),
+                          child: Text("Dislike", style: TextStyle(fontSize: 15),)
+                      ),
+                    ),
+                    //33333333333333333
+                    SizedBox(height: 4),
+                    OutlineButton(
+                      onPressed: () {
+                        pageController.nextPage(duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
+                        _unChosen(index);
+                        _setChosen(index, 3);
+                        setState(() {_isDone = isDone();});
+                      },
+                      splashColor: Colors.deepPurpleAccent[400],
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      child: Container(
+                          width: 1000,
+                          padding: EdgeInsets.fromLTRB(4, 10, 4, 10),
+                          child: Text("Neither Like not Dislike", style: TextStyle(fontSize: 15),)
+                      ),
+                    ),
+                    //444444444444444444
+                    SizedBox(height: 4),
+                    OutlineButton(
+                      onPressed: () {
+                        pageController.nextPage(duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
+                        _unChosen(index);
+                        _setChosen(index, 4);
+                        setState(() {_isDone = isDone();});
+                      },
+                      splashColor: Colors.deepPurpleAccent[400],
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      child: Container(
+                          width: 1000,
+                          padding: EdgeInsets.fromLTRB(4, 10, 4, 10),
+                          child: Text("Like", style: TextStyle(fontSize: 15),)
+                      ),
+                    ),
+                    //55555555555555555
+                    SizedBox(height: 4),
+                    OutlineButton(
+                      onPressed: () {
+                        pageController.nextPage(duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
+                        _unChosen(index);
+                        _setChosen(index, 5);
+                        setState(() {_isDone = isDone();});
+                      },
+                      splashColor: Colors.deepPurpleAccent[400],
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      child: Container(
+                          width: 1000,
+                          padding: EdgeInsets.fromLTRB(4, 10, 4, 10),
+                          child: Text("Strongly Like", style: TextStyle(fontSize: 15),)
+                      ),
+                    ),
+
+                    _isDone == true ? Container(
+                      margin: EdgeInsets.only(left: 110, top: 5),
+                      child: RaisedButton(
+                        onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(listQuestion: _listQuestion, testName: widget.perTest.type,)));},
+                        color: Colors.deepPurpleAccent[400],
+                        child: Text('Submit', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
+                      ),
+                    ) : Text(''),
+                  ],
+                ),
+              )
+          );
         }, controller: pageController, physics: NeverScrollableScrollPhysics()),
         backgroundColor: Colors.grey[200],
       ),
@@ -347,6 +460,19 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
     _listQuestion[index * 4 + 3].list_answers.first.isChosen = false;
   }
 
+  void _setChosen(int index, int point) {
+    _listQuestion[index].isChosen = true;
+    for(int i = 0; i < point; i++) {
+      _listQuestion[index].list_answers[i].isChosen = true;
+    }
+  }
+
+  void _unChosen(int index) {
+    _listQuestion[index].list_answers.forEach((answer) {
+      answer.isChosen = false;
+    });
+  }
+
   bool isDone() {
     int x = 0;
     _listQuestion.forEach((quest) {
@@ -382,14 +508,15 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
   }
 }
 
-void displayDiSCGuide(BuildContext context) {
+void displayDiSCGuide(BuildContext context, String test) {
   var arlertDialog = AlertDialog(
     title: Text('Guide'),
-    content: Text('This test contains 28 groups of four statements. Answer honestly and spontaneously. It should take you only 5 to 10 minutes to complete.'
+    content: test == "DiSC" ? Text('This test contains 28 groups of four statements. Answer honestly and spontaneously. It should take you only 5 to 10 minutes to complete.'
         '\n\n\t      * Study all the descriptions in each group of four'
         '\n\t     * Select the one description that you consider most like you'
         '\n\t     * Study the remaining three choices in the same group'
-        '\n\t     * Select the one description you consider least like you'),
+        '\n\t     * Select the one description you consider least like you')
+                             : Text("To take the Holland Code career quiz, mark your interest in each activity shown. Do not worry about whether you have the skills or training to do an activity, or how much money you might make. Simply think about whether you would enjoy doing it or not."),
     actions: <Widget>[
       RaisedButton(onPressed: () {
         Navigator.of(context, rootNavigator: true).pop('dialog');
@@ -403,3 +530,4 @@ void displayDiSCGuide(BuildContext context) {
     builder: (context) => arlertDialog,
   );
 }
+
