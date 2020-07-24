@@ -16,7 +16,7 @@ class ResultApiRepository implements ResultRepository {
 
   @override
   Future fectResult(String gmail) async {
-    return await http.get(ApiUrl.TESTRESULT_URL);
+    return await http.get(ApiUrl.TESTRESULT_FINDBYGMAIL_URL + gmail);
   }
 
   @override

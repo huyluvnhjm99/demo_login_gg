@@ -1,8 +1,10 @@
 import 'package:demologingg/dependency/presenter/MainPresenter.dart';
 import 'package:demologingg/data/PersonalityTest.dart';
 import 'package:demologingg/sign_in.dart';
+import 'package:demologingg/views/history_page.dart';
 import 'package:demologingg/views/login_page.dart';
 import 'package:demologingg/views/quiz_page.dart';
+import 'package:demologingg/views/result_page.dart';
 import 'package:flutter/material.dart';
 
 class PersonalityTests extends StatefulWidget {
@@ -57,25 +59,41 @@ class __PersonalityTestsState extends State<PersonalityTests> implements Persona
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  SizedBox(height: 20),
+                  Row(
+                    children: <Widget>[
+                      SizedBox(width: 20),
+                      Text(personalityTests[index].type + " Test", style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+                      SizedBox(width: personalityTests[index].type == "MBTI" ? 150 : personalityTests[index].type == "DiSC profile" ? 66 : 46),
+                      RaisedButton(
+                          onPressed: () { displayInformation(context, personalityTests[index]);},
+                          child: Text('Info',style: TextStyle(fontWeight: FontWeight.bold)), color: Colors.white, textColor: Colors.deepPurpleAccent[400]
+                      ),
+                    ],
+                  ),
+                  Divider(height: 1, color: Colors.deepPurpleAccent[400], thickness: 2, indent: 20, endIndent: 14,),
+                  SizedBox(height: 10),
                   AspectRatio(aspectRatio: 18.0 / 11.0, child: Image.network( personalityTests[index].image, height: 200)),
                   Container(
                     padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        role == "Admin" ?
-                        RaisedButton(onPressed: (){}, child: Text('Edit',style: TextStyle(fontWeight: FontWeight.bold)), color: Colors.deepPurpleAccent[400], textColor: Colors.white) :
-                        SizedBox(width: 0),
-                        SizedBox(width: 12),
                         RaisedButton(
-                            onPressed: () { displayInformation(context, personalityTests[index]);},
-                            child: Text('Information',style: TextStyle(fontWeight: FontWeight.bold)), color: Colors.deepPurpleAccent[400], textColor: Colors.white
+                            onPressed: () {displayGuide(context, personalityTests[index]);}, 
+                            child: Text('Test Now',style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                            color: Colors.white,
+                            padding: EdgeInsets.fromLTRB(45, 18, 45, 18),
+                            textColor: Colors.deepPurpleAccent[400],
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(1.0),
+                                side: BorderSide(color: Colors.deepPurpleAccent[400],)
+                            ),
                         ),
-                        SizedBox(width: 12),
-                        RaisedButton(onPressed: () {displayGuide(context, personalityTests[index]);}, child: Text('Test Now',style: TextStyle(fontWeight: FontWeight.bold)), color: Colors.deepPurpleAccent[400], textColor: Colors.white),
                       ],
                     ),
                   ),
+                  SizedBox(height: 20),
                 ],
               ),
             );
@@ -103,7 +121,10 @@ class __PersonalityTestsState extends State<PersonalityTests> implements Persona
       position: RelativeRect.fromLTRB(0, 80, 100, 100),
       items: [
         PopupMenuItem(
-          child: Text("View History"),
+          child: FlatButton(onPressed: () {
+            signOutGoogle();
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) {return HistoryPage(listPerTest: personalityTests,);}), ModalRoute.withName('/'));
+          }, child: Text("Result History")),
         ),
         PopupMenuItem(
           child: FlatButton(onPressed: () {
@@ -136,7 +157,7 @@ class __PersonalityTestsState extends State<PersonalityTests> implements Persona
           Navigator.of(context, rootNavigator: true).pop('dialog');
           Navigator.push(context, MaterialPageRoute(builder: (context) => QuizPage(perTest: perTest,)));
         },
-            child: Text('START',style: TextStyle(fontWeight: FontWeight.bold)), color: Colors.deepPurpleAccent[400], textColor: Colors.white),
+            child: Text('START',style: TextStyle(fontWeight: FontWeight.bold)), color: Colors.white, textColor: Colors.deepPurpleAccent[400]),
       ],
     );
 

@@ -9,6 +9,7 @@ import 'package:demologingg/views/result_page.dart';
 import 'package:flutter/material.dart';
 import 'package:demologingg/sign_in.dart';
 import 'package:demologingg/views/login_page.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class QuizPage extends StatefulWidget {
 
@@ -28,21 +29,25 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
   List<Personality> _perList;
   bool _isLoading;
   bool _isDone;
+  int _point;
+  PageController pageController;
 
   _QuizPageState() {
     _presenter = new QuestionPresenter(this);
+      pageController = PageController (
+      initialPage: 0,
+      keepPage: true,
+    );
   }
 
-  PageController pageController = PageController(
-    initialPage: 0,
-    keepPage: true,
-  );
+
 
   @override
   void initState() {
     super.initState();
     _isLoading = true;
     _isDone = false;
+    _point = 0;
     _presenter.loadQuestionList(widget.perTest.id);
   }
 
@@ -67,17 +72,27 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
         PageView.builder(itemCount: _listQuestion.length,itemBuilder: (context, index) {
             return Card(clipBehavior: Clip.antiAliasWithSaveLayer,
                 margin: EdgeInsets.fromLTRB(30, 50, 30, 85),
-                child: Padding(padding: EdgeInsets.fromLTRB(20, 65, 20, 35),
+                child: Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 35),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text('Q.' + (index + 1).toString() + ': ' + _listQuestion[index].question_content, style: TextStyle(fontSize: 28)),
-                      SizedBox(height: 45),
+                      LinearPercentIndicator(
+                        width: 310,
+                        animation: true,
+                        animationDuration: 500,
+                        lineHeight: 15.0,
+                        percent: _getTotalChosenQuestion() / _getTotalQuestion(),
+                        center: Text(_getTotalChosenQuestion().toString() + "/" + _getTotalQuestion().toString(), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
+                        linearStrokeCap: LinearStrokeCap.butt,
+                        progressColor: Colors.deepPurpleAccent[200],
+                      ),
+                      SizedBox(height: 30),
+                      Text('Q.' + (index + 1).toString() + ': ' + _listQuestion[index].question_content, style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+                      SizedBox(height: 30),
 
                       _listQuestion[index].list_answers.length >= 1  ?
                       OutlineButton(
                         onPressed: () {
-                            pageController.nextPage(duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
                             _listQuestion[index].list_answers.forEach((answer) {answer.isChosen = false;});
                             _listQuestion[index].list_answers[0].isChosen = true;
                             _listQuestion[index].isChosen = true;
@@ -100,7 +115,6 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                       _listQuestion[index].list_answers.length >= 2 ?
                       OutlineButton(
                         onPressed: () {
-                          pageController.nextPage(duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
                           _listQuestion[index].list_answers.forEach((answer) {answer.isChosen = false;});
                           _listQuestion[index].list_answers[1].isChosen = true;
                           _listQuestion[index].isChosen = true;
@@ -117,14 +131,50 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                         ),
                       ) : Text(''),
 
-                      _isDone == true ? Container(
-                        margin: EdgeInsets.only(left: 110, top: 10),
-                        child: RaisedButton(
-                          onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(listQuestion: _listQuestion, testName: widget.perTest.type,)));},
-                          color: Colors.deepPurpleAccent[400],
-                          child: Text('Submit', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
-                        ),
-                      ) : Text(''),
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 15, top: 55),
+                            child: RaisedButton(
+                              onPressed: () {
+                                pageController.previousPage(duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
+                              },
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  side: BorderSide(color: Colors.deepPurpleAccent[400])
+                              ),
+                              child: Text('Back', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),),
+                            ),
+                          ),
+                          _isDone == true ? Container(
+                            margin: EdgeInsets.only(left: 30, top: 55),
+                            child: RaisedButton(
+                              onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(listQuestion: _listQuestion, testName: widget.perTest.type,)));},
+                              color: Colors.deepPurpleAccent[400],
+                              child: Text('Submit', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                            ),
+                          ) : _isNext2(index) == true ? Container(
+                            margin: EdgeInsets.only(left: pageController.page > 0 ? 30 : 30, top: 55),
+                            child: RaisedButton(
+                              onPressed: () {
+                                pageController.nextPage(duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
+                              },
+                              color: Colors.deepPurpleAccent[400],
+                              child: Text('Next', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
+                            ),
+                          ) : Text(''),
+                        ],
+                      ),
+
+//                      _isDone == true ? Container(
+//                        margin: EdgeInsets.only(left: 110, top: 10),
+//                        child: RaisedButton(
+//                          onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(listQuestion: _listQuestion, testName: widget.perTest.type,)));},
+//                          color: Colors.deepPurpleAccent[400],
+//                          child: Text('Submit', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
+//                        ),
+//                      ) : Text(''),
                     ],
                   ),
                 )
@@ -138,6 +188,17 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    SizedBox(height: 10),
+                    LinearPercentIndicator(
+                      width: 310,
+                      animation: true,
+                      animationDuration: 500,
+                      lineHeight: 15.0,
+                      percent: _getTotalChosenQuestion() / (((_getTotalQuestion())/ 4)),
+                      center: Text(_getTotalChosenQuestion().toString() + "/" + (((_getTotalQuestion())/4)).round().toString(), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
+                      linearStrokeCap: LinearStrokeCap.butt,
+                      progressColor: Colors.deepPurpleAccent[200],
+                    ),
                     Padding(
                       padding:EdgeInsets.fromLTRB(280, 0, 0, 20),
                       child: IconButton(icon: Icon(Icons.info), onPressed: () {
@@ -152,10 +213,11 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                             onPressed: () {
                               _setChosenFirst(index);
                               _listQuestion[index * 4 + 0].list_answers.first.isChosen = true;
+                              _listQuestion[index * 4 + 0].isChosen = true;
                               _listQuestion[index * 4 + 0].list_answers.last.isChosen = false;
                               setState(() {});
                             },
-                            iconSize: 40,
+                            iconSize: 35,
                         ),
                         IconButton(
                             icon: _listQuestion[index * 4 + 0].list_answers.last.isChosen ?
@@ -163,15 +225,16 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                             onPressed: () {
                               _setChosenLast(index);
                               _listQuestion[index * 4 + 0].list_answers.last.isChosen = true;
+                              _listQuestion[index * 4 + 0].isChosen = true;
                               _listQuestion[index * 4 + 0].list_answers.first.isChosen = false;
                               setState(() {});
                             },
-                            iconSize: 40,
+                            iconSize: 35,
                         ),
                         Expanded(child: Text(_listQuestion[index * 4 + 0].question_content, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)))
                       ],
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 15),
                     Row(
                       children: <Widget>[
                         IconButton(
@@ -180,10 +243,11 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                           onPressed: () {
                             _setChosenFirst(index);
                             _listQuestion[index * 4 + 1].list_answers.first.isChosen = true;
+                            _listQuestion[index * 4 + 1].isChosen = true;
                             _listQuestion[index * 4 + 1].list_answers.last.isChosen = false;
                             setState(() {});
                           },
-                          iconSize: 40,
+                          iconSize: 35,
                         ),
                         IconButton(
                           icon: _listQuestion[index * 4 + 1].list_answers.last.isChosen ?
@@ -191,15 +255,16 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                           onPressed: () {
                             _setChosenLast(index);
                             _listQuestion[index * 4 + 1].list_answers.last.isChosen = true;
+                            _listQuestion[index * 4 + 1].isChosen = true;
                             _listQuestion[index * 4 + 1].list_answers.first.isChosen = false;
                             setState(() {});
                           },
-                          iconSize: 40,
+                          iconSize: 35,
                         ),
                         Expanded(child: Text(_listQuestion[index * 4 + 1].question_content, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)))
                       ],
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 15),
                     Row(
                       children: <Widget>[
                         IconButton(
@@ -208,10 +273,11 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                           onPressed: () {
                             _setChosenFirst(index);
                             _listQuestion[index * 4 + 2].list_answers.first.isChosen = true;
+                            _listQuestion[index * 4 + 2].isChosen = true;
                             _listQuestion[index * 4 + 2].list_answers.last.isChosen = false;
                             setState(() {});
                           },
-                          iconSize: 40,
+                          iconSize: 35,
                         ),
                         IconButton(
                           icon: _listQuestion[index * 4 + 2].list_answers.last.isChosen ?
@@ -219,15 +285,16 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                           onPressed: () {
                             _setChosenLast(index);
                             _listQuestion[index * 4 + 2].list_answers.last.isChosen = true;
+                            _listQuestion[index * 4 + 2].isChosen = true;
                             _listQuestion[index * 4 + 2].list_answers.first.isChosen = false;
                             setState(() {});
                           },
-                          iconSize: 40,
+                          iconSize: 35,
                         ),
                         Expanded(child: Text(_listQuestion[index * 4 + 2].question_content, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)))
                       ],
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 15),
                     Row(
                       children: <Widget>[
                         IconButton(
@@ -236,10 +303,11 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                           onPressed: () {
                             _setChosenFirst(index);
                             _listQuestion[index * 4 + 3].list_answers.first.isChosen = true;
+                            _listQuestion[index * 4 + 3].isChosen = true;
                             _listQuestion[index * 4 + 3].list_answers.last.isChosen = false;
                             setState(() {});
                           },
-                          iconSize: 40,
+                          iconSize: 35,
                         ),
                         IconButton(
                           icon: _listQuestion[index * 4 + 3].list_answers.last.isChosen ?
@@ -247,150 +315,194 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
                           onPressed: () {
                             _setChosenLast(index);
                             _listQuestion[index * 4 + 3].list_answers.last.isChosen = true;
+                            _listQuestion[index * 4 + 3].isChosen = true;
                             _listQuestion[index * 4 + 3].list_answers.first.isChosen = false;
                             setState(() {});
                           },
-                          iconSize: 40,
+                          iconSize: 35,
                         ),
                         Expanded(child: Text(_listQuestion[index * 4 + 3].question_content, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)))
                       ],
                     ),
 
-                    SizedBox(height: 20),
+                    SizedBox(height: 15),
 
-                    _isNext(index) ? _isDone2() ?  Container(
-                      margin: EdgeInsets.only(left: 110, top: 10),
-                      child: RaisedButton(
-                        onPressed: () {
-                          pageController.nextPage(duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
-                        },
-                        color: Colors.deepPurpleAccent[400],
-                        child: Text('Next', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
-                      ),
-                    )
-                        :
-                    Container(
-                      margin: EdgeInsets.only(left: 110, top: 10),
-                      child: RaisedButton(
-                        onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(listQuestion: _listQuestion, testName: widget.perTest.type,)));},
-                        color: Colors.deepPurpleAccent[400],
-                        child: Text('Submit', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
-                      ),
-                    )
-                        : Text(''),
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(left: 15, top: 5),
+                          child: RaisedButton(
+                            onPressed: () {
+                              pageController.previousPage(duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
+                            },
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                side: BorderSide(color: Colors.deepPurpleAccent[400])
+                            ),
+                            child: Text('Back', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),),
+                          ),
+                        ),
+                        _isNext(index) ? _isDone2() ?  Container(
+                          margin: EdgeInsets.only(left: 95, top: 5),
+                          child: RaisedButton(
+                            onPressed: () {
+                              pageController.nextPage(duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
+                            },
+                            color: Colors.deepPurpleAccent[400],
+                            child: Text('Next', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
+                          ),
+                        )
+                            :
+                        Container(
+                          margin: EdgeInsets.only(left: 110, top: 10),
+                          child: RaisedButton(
+                            onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(listQuestion: _listQuestion, testName: widget.perTest.type,)));},
+                            color: Colors.deepPurpleAccent[400],
+                            child: Text('Submit', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
+                          ),
+                        )
+                            : Text(''),
+                      ],
+                    ),
                   ],
                 ),
               )
           );
         }, controller: pageController, physics: NeverScrollableScrollPhysics())
+        //HollandCode
             : PageView.builder(itemCount: _listQuestion.length,itemBuilder: (context, index) {
           return Card(clipBehavior: Clip.antiAliasWithSaveLayer,
               margin: EdgeInsets.fromLTRB(30, 50, 30, 85),
-              child: Padding(padding: EdgeInsets.fromLTRB(20, 4, 20, 25),
+              child: Padding(padding: EdgeInsets.fromLTRB(0, 4, 0, 25),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    LinearPercentIndicator(
+                      width: 350,
+                      animation: true,
+                      animationDuration: 500,
+                      lineHeight: 15.0,
+                      percent: _getTotalChosenQuestion() / _getTotalQuestion(),
+                      center: Text(_getTotalChosenQuestion().toString() + "/" + _getTotalQuestion().toString(), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
+                      linearStrokeCap: LinearStrokeCap.butt,
+                      progressColor: Colors.deepPurpleAccent[200],
+                    ),
                     Padding(
                       padding:EdgeInsets.fromLTRB(280, 0, 0, 5),
                       child: IconButton(icon: Icon(Icons.info), onPressed: () {
                         displayDiSCGuide(context, "HOLLAND");
                       }),
                     ),
-                    Text('Q.' + (index + 1).toString() + ': ' + _listQuestion[index].question_content, style: TextStyle(fontSize: 22)),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 2, 20, 45),
+                        child: Text('Q.' + (index + 1).toString() + ': ' + _listQuestion[index].question_content, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                    ),
+                    SizedBox(height: 8),
+                    Row(children: <Widget>[
+                      //111111
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            _unChosen(index);
+                            _setChosen(index, 1);
+                            _listQuestion[index].isChosen = true;
+                            setState(() {_isDone = isDone(); _point = 1;});
+                          },
+                          child: Icon(Icons.star, color: _numOfChosen(index) >= 1 ? Colors.orange : Colors.grey, size: 70),
+                        ),
+                      ),
+                      //2222222
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            _unChosen(index);
+                            _setChosen(index, 2);
+                            _listQuestion[index].isChosen = true;
+                            setState(() {_isDone = isDone(); _point = 2;});
+                          },
+                          child: Icon(Icons.star, color: _numOfChosen(index) >= 2 ? Colors.orange : Colors.grey, size: 70),
+                        ),
+                      ),
+                      //333333333
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            _unChosen(index);
+                            _setChosen(index, 3);
+                            _listQuestion[index].isChosen = true;
+                            setState(() {_isDone = isDone(); _point = 3;});
+                          },
+                          child: Icon(Icons.star, color: _numOfChosen(index) >= 3 ? Colors.orange : Colors.grey, size: 70),
+                        ),
+                      ),
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            _unChosen(index);
+                            _setChosen(index, 4);
+                            _listQuestion[index].isChosen = true;
+                            setState(() {_isDone = isDone(); _point = 4;});
+                          },
+                          child: Icon(Icons.star, color: _numOfChosen(index) >= 4 ? Colors.orange : Colors.grey, size: 70),
+                        ),
+                      ),
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            _unChosen(index);
+                            _setChosen(index, 5);
+                            _listQuestion[index].isChosen = true;
+                            setState(() {_isDone = isDone(); _point = 5;});
+                          },
+                          child: Icon(Icons.star, color: _numOfChosen(index) >= 5 ? Colors.orange : Colors.grey, size: 70),
+                        ),
+                      ),
+                    ]),
                     SizedBox(height: 10),
-                    //1111111111111111111
-                    OutlineButton(
-                      onPressed: () {
-                        pageController.nextPage(duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
-                        _unChosen(index);
-                        _setChosen(index, 1);
-                        setState(() {_isDone = isDone();});
-                      },
-                      splashColor: Colors.deepPurpleAccent[400],
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                      child: Container(
-                          width: 1000,
-                          padding: EdgeInsets.fromLTRB(4, 10, 4, 10),
-                          child: Text("Strongly Dislike", style: TextStyle(fontSize: 15),)
-                      ),
+                    Center(
+                      child: Text(getDescript(_isNext2(index) == true ? _point : 0), style: TextStyle(fontSize: 14, color: Colors.grey[400])),
                     ),
-                    //2222222222222222222
-                    SizedBox(height: 4),
-                    OutlineButton(
-                      onPressed: () {
-                        pageController.nextPage(duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
-                        _unChosen(index);
-                        _setChosen(index, 2);
-                        setState(() {_isDone = isDone();});
-                      },
-                      splashColor: Colors.deepPurpleAccent[400],
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                      child: Container(
-                          width: 1000,
-                          padding: EdgeInsets.fromLTRB(4, 10, 4, 10),
-                          child: Text("Dislike", style: TextStyle(fontSize: 15),)
-                      ),
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(left: 15, top: 55),
+                          child: RaisedButton(
+                            onPressed: () {
+                              pageController.previousPage(duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
+                            },
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                side: BorderSide(color: Colors.deepPurpleAccent[400])
+                            ),
+                            child: Text('Back', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),),
+                          ),
+                        ),
+                        _isDone == true ? Container(
+                          margin: EdgeInsets.only(left: 30, top: 55),
+                          child: RaisedButton(
+                            onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(listQuestion: _listQuestion, testName: widget.perTest.type,)));},
+                            color: Colors.deepPurpleAccent[400],
+                            child: Text('Submit', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                          ),
+                        ) : _isNext2(index) == true ? Container(
+                          margin: EdgeInsets.only(left: 30, top: 55),
+                          child: RaisedButton(
+                            onPressed: () {
+                              pageController.nextPage(duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
+                            },
+                            color: Colors.deepPurpleAccent[400],
+                            child: Text('Next', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
+                          ),
+                        ) : Text(''),
+                      ],
                     ),
-                    //33333333333333333
-                    SizedBox(height: 4),
-                    OutlineButton(
-                      onPressed: () {
-                        pageController.nextPage(duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
-                        _unChosen(index);
-                        _setChosen(index, 3);
-                        setState(() {_isDone = isDone();});
-                      },
-                      splashColor: Colors.deepPurpleAccent[400],
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                      child: Container(
-                          width: 1000,
-                          padding: EdgeInsets.fromLTRB(4, 10, 4, 10),
-                          child: Text("Neither Like not Dislike", style: TextStyle(fontSize: 15),)
-                      ),
-                    ),
-                    //444444444444444444
-                    SizedBox(height: 4),
-                    OutlineButton(
-                      onPressed: () {
-                        pageController.nextPage(duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
-                        _unChosen(index);
-                        _setChosen(index, 4);
-                        setState(() {_isDone = isDone();});
-                      },
-                      splashColor: Colors.deepPurpleAccent[400],
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                      child: Container(
-                          width: 1000,
-                          padding: EdgeInsets.fromLTRB(4, 10, 4, 10),
-                          child: Text("Like", style: TextStyle(fontSize: 15),)
-                      ),
-                    ),
-                    //55555555555555555
-                    SizedBox(height: 4),
-                    OutlineButton(
-                      onPressed: () {
-                        pageController.nextPage(duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
-                        _unChosen(index);
-                        _setChosen(index, 5);
-                        setState(() {_isDone = isDone();});
-                      },
-                      splashColor: Colors.deepPurpleAccent[400],
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                      child: Container(
-                          width: 1000,
-                          padding: EdgeInsets.fromLTRB(4, 10, 4, 10),
-                          child: Text("Strongly Like", style: TextStyle(fontSize: 15),)
-                      ),
-                    ),
-
-                    _isDone == true ? Container(
-                      margin: EdgeInsets.only(left: 110, top: 5),
-                      child: RaisedButton(
-                        onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(listQuestion: _listQuestion, testName: widget.perTest.type,)));},
-                        color: Colors.deepPurpleAccent[400],
-                        child: Text('Submit', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
-                      ),
-                    ) : Text(''),
                   ],
                 ),
               )
@@ -446,11 +558,34 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
     )) ?? false;
   }
 
+  int _getTotalQuestion() {
+    int result = 0;
+    _listQuestion.forEach((quest) {
+      result ++;
+    });
+    return result;
+  }
+
+  int _getTotalChosenQuestion() {
+    int result = 0;
+    _listQuestion.forEach((quest) {
+      if(quest.isChosen) {
+        result ++;
+      }
+    });
+    return result;
+  }
+
  void _setChosenLast(int index) {
     _listQuestion[index * 4 + 0].list_answers.last.isChosen = false;
     _listQuestion[index * 4 + 1].list_answers.last.isChosen = false;
     _listQuestion[index * 4 + 2].list_answers.last.isChosen = false;
     _listQuestion[index * 4 + 3].list_answers.last.isChosen = false;
+
+    _listQuestion[index * 4 + 0].isChosen = false;
+    _listQuestion[index * 4 + 1].isChosen = false;
+    _listQuestion[index * 4 + 2].isChosen = false;
+    _listQuestion[index * 4 + 3].isChosen = false;
  }
 
   void _setChosenFirst(int index) {
@@ -458,6 +593,11 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
     _listQuestion[index * 4 + 1].list_answers.first.isChosen = false;
     _listQuestion[index * 4 + 2].list_answers.first.isChosen = false;
     _listQuestion[index * 4 + 3].list_answers.first.isChosen = false;
+
+    _listQuestion[index * 4 + 0].isChosen = false;
+    _listQuestion[index * 4 + 1].isChosen = false;
+    _listQuestion[index * 4 + 2].isChosen = false;
+    _listQuestion[index * 4 + 3].isChosen = false;
   }
 
   void _setChosen(int index, int point) {
@@ -471,6 +611,16 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
     _listQuestion[index].list_answers.forEach((answer) {
       answer.isChosen = false;
     });
+  }
+
+  int _numOfChosen(int index) {
+    int result = 0;
+    _listQuestion[index].list_answers.forEach((answer) {
+      if(answer.isChosen) {
+        result++;
+      }
+    });
+    return result;
   }
 
   bool isDone() {
@@ -506,7 +656,36 @@ class _QuizPageState extends State<QuizPage> implements QuestionListView {
     }
     return x == 2 ? true : false;
   }
+
+  bool _isNext2(int index) {
+    bool check = false;
+    _listQuestion[index].list_answers.forEach((answer) {
+      if(answer.isChosen) {
+        check = true;
+      }
+    });
+    return check;
+  }
+
+  String getDescript(int point) {
+    String descript = "";
+    if(point == 1) {
+      descript = "1★ - Strongly dislike";
+    } else if(point == 2) {
+      descript = "2★ - Dislike";
+    } else if(point == 3) {
+      descript = "3★ - Neither like not dislike";
+    } else if(point == 4) {
+      descript = "4★ - Like";
+    } else if(point == 5) {
+      descript = "5★ - Strongly like";
+    } else {
+      descript = "Select one";
+    }
+    return descript;
+  }
 }
+
 
 void displayDiSCGuide(BuildContext context, String test) {
   var arlertDialog = AlertDialog(
@@ -516,7 +695,12 @@ void displayDiSCGuide(BuildContext context, String test) {
         '\n\t     * Select the one description that you consider most like you'
         '\n\t     * Study the remaining three choices in the same group'
         '\n\t     * Select the one description you consider least like you')
-                             : Text("To take the Holland Code career quiz, mark your interest in each activity shown. Do not worry about whether you have the skills or training to do an activity, or how much money you might make. Simply think about whether you would enjoy doing it or not."),
+                             : Text("To take the Holland Code career quiz, mark your interest in each activity shown. Do not worry about whether you have the skills or training to do an activity, or how much money you might make. Simply think about whether you would enjoy doing it or not."
+        "\n\n 1★ - Strongly dislike"
+        "\n 2★ - Dislike"
+        "\n 3★ - Neither like not dislike"
+        "\n 4★ - Like"
+        "\n 5★ - Strongly like"),
     actions: <Widget>[
       RaisedButton(onPressed: () {
         Navigator.of(context, rootNavigator: true).pop('dialog');

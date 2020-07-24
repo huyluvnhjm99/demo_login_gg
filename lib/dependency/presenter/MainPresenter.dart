@@ -21,7 +21,9 @@ abstract class PersonalityView {
 }
 
 abstract class ResultView {
+  void onSuccesss(List<Result> resultList);
 }
+
 
 class PersonalityTestPresenter {
   PersonalityTestListViewContract _view;
@@ -61,6 +63,7 @@ class PersonalityPresenter {
 
 class ResultPresenter {
   ResultView _view;
+  List<Result> resultList;
   ResultRepository _resultRepo;
 
   ResultPresenter(this._view) {
@@ -69,6 +72,18 @@ class ResultPresenter {
 
   void postResult(Result result, String token) {
     _resultRepo.postResult(result, token);
+  }
+
+  void loadResultList(String gmail) {
+    _resultRepo.fectResult(gmail).then((response) {
+      Iterable list = json.decode(response.body);
+      resultList = new List<Result>();
+      resultList = list.map((model) => Result.fromObject(model)).toList();
+    }).then((data) {
+      Timer timer = new Timer(const Duration(seconds: 10), () async {
+        await _view.onSuccesss(resultList);
+      });
+    });
   }
 }
 
@@ -99,7 +114,7 @@ class QuestionPresenter {
         });
       });
     }).then((data) {
-       Timer timer = new Timer(const Duration(seconds:5),() async {
+       Timer timer = new Timer(const Duration(seconds:10),() async {
          await _view.onSuccess(questionList);
       });
     });

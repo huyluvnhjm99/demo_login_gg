@@ -49,7 +49,7 @@ class Result {
 
   Result.fromObject(dynamic o) {
     this._id = o["id"];
-    this._date_create = o["date_create"];
+    this._date_create = DateTime.parse(o["date_create"]);
     this._test_name = o["test_name"];
     this._gmail = o["gmail"];
     this._personality = o["personality"];

@@ -17,7 +17,7 @@ class ApiUrl {
   static final String PERSONALITY_FINDBYID_URL = PERSONALITY_URL + "/";
 
   static final String TESTRESULT_URL = BASE_URL + "test-result";
-  //static final String TESTRESULT_FINDBY_URL = PERSONALITY_URL + "/";
+  static final String TESTRESULT_FINDBYGMAIL_URL = TESTRESULT_URL + "/gmail?gmail=";
 
   static final String TOKEN_URL = BASE_URL + "token";
 }

@@ -236,4 +236,9 @@ class _ResultPageState extends State<ResultPage> implements PersonalityView, Res
     }
     return result;
   }
+
+  @override
+  void onSuccesss(List<Result> resultList) {
+    // TODO: implement onSuccesss
+  }
 }
